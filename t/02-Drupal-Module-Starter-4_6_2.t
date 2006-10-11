@@ -6,7 +6,7 @@ BEGIN {
 }
 
 ok(my $ms = Drupal::Module::Starter->new('t/config.yaml'));
-isa_ok($ms->{stubs},'Drupal::Module::Starter::4_6_2');
+#isa_ok($ms->{stubs},'Drupal::Module::Starter::4_6_2');
 
 is($ms->{cfg}->{author},'Author not set');
 
@@ -43,7 +43,7 @@ END {
 	./t/output/FLEEBNATER/LICENSE.txt 
 	./t/output/FLEEBNATER/INSTALL.txt)) {
 		
-		ok(unlink $_, "Unlink $_");
+		unlink $_;
 	}
 
 }

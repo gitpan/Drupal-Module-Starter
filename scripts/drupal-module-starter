@@ -12,6 +12,9 @@ drupal-module-starter - creates a skeleton Drupal module distribution
 
 =cut
 
+our $version = 0.3;
+
+print "Starting module starter $version\n\n";
 
 my $config;
 
@@ -29,7 +32,8 @@ Options:
     --email=email    Author's email (required)
     --hooks=list,of,hooks,here Which hooks you wish to generate stubs for
     --verbose     Print progress messages while working
-    --force          Delete pre-existing files if needed
+    --force=1          Delete pre-existing files if needed
+	--table=database_table_name
 
     --help           Show this message
 
@@ -37,24 +41,27 @@ Example:
 
 drupal-module-starter --module=Recording,Artist,Track,Discography,Review,PodCastGenerator,Pony \
   --author="Steve McNabb" --email="smcnabb@cpan.org" \
-  --dir=/tmp/someone/projects/drupal/dev --hooks=xmlrpc,form,help,info,init,insert,delete,update
-  
+  --dir=/tmp/someone/projects/drupal/dev --hooks=xmlrpc,form,help,info,init,insert,delete,update \
+--table=my_new_table
+
  This would create the 7 listed modules, each in its own directory under --dir, with stubs installed for
- the listed --hooks (if any).
+ the listed --hooks (if any).  Note that the table name is just used for generating code -- no tables are
+ actually created.  You have to do that part manually.
   
   
-hook_name and hook_perm are always generated.s
+by default perm, access, menu, load, insert, update, delete, node_info and form hooks are created
 
 =cut
 
 GetOptions(
-	"module=s" => ($config->{modules} ||= []),
-	"dir=s" => \$config->{dir},
-	"email=s" => \$config->{email},
-	"author=s" => \$config->{author},
-	"hooks=s" => ($config->{hooks} ||= []) ,
-	"verbose=s" => \$config->{verbose},
-	"force=s" => \$config->{force},
+	"module=s" 	=> ($config->{modules} ||= []),
+	"dir=s" 			=> \$config->{dir},
+	"email=s" 		=> \$config->{email},
+	"author=s" 		=> \$config->{author},
+	"hooks=s" 		=> ($config->{hooks} ||= []) ,
+	"verbose=s" 	=> \$config->{verbose},
+	"force=s" 		=> \$config->{force},
+	"table=s"			=> \$config->{table}
 	
 );
 
@@ -64,7 +71,11 @@ if(!$config->{dir}) { $config->{dir} = '.' }
 if(!$config->{modules}[0]) { die "No --module(s) passed to $0"; }
 if(!$config->{author}) { die "No --author set - the --author option is required" }
 if(!$config->{email}) { die "No --email set - the --email option is required" }
-if(!$config->{hooks}) { warn "No hooks defined - reverting to default hooks (perm and node_name)" }
+if(!$config->{hooks}) { 
+	warn "No hooks defined - reverting to default hooks"; 
+	$config->{hooks}[0] = 'perm,access,menu,load,insert,update,delete,node_info,form';	
+}
+
 
 # run file generation
 my @modules = split /,/, $config->{modules}[0];
@@ -81,15 +92,20 @@ foreach my $module (@modules) {
     $yaml .= "email: $config->{email}\n";
     $yaml .= "dir: $config->{dir}\n";
 	$yaml .= "force: $config->{force}\n" if $config->{force};    
+	$yaml .= "table: $config->{table}\n" if $config->{table};
+	
     # set up hooks
     my @hooks = split /,/, $config->{hooks}[0];
     for my $hook (@hooks) {
+   
     	$yaml =~ s/hook_$hook:\s+\d+?/hook_$hook: 1/;
     }
 	
 	open(TMPFILE, ">$tmpfile") or die "Couldn't open $tmpfile for write..";
 	print TMPFILE $yaml;
 	close TMPFILE;
+	
+	print "Wrote yaml to $tmpfile\n";
 		
 	# create a Starter object
 	my $module = Drupal::Module::Starter->new($tmpfile);
@@ -98,7 +114,7 @@ foreach my $module (@modules) {
 	$module->generate;	
 	
 	# clean up the tempfile
-	unlink($tmpfile);
+	#unlink($tmpfile);
 }
 
 
