@@ -30,15 +30,13 @@ hook_name and hook_perm are always generated.
 
 TODO:
 
-* general tidyup
 * add page_ hook support: each page_foo callback should get a simple stub and/or return 
   some dummy content, and a menu item should be generated as well.  
- * fix warning about uninitiailized concat
  * remove use of /usr/bin/php from test harness and add skippable PHP.pm test
   
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2005 Steve McNabb - smcnabb@cpan.org
+Copyright (C) 2006 Steve McNabb - smcnabb@cpan.org
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

@@ -10,15 +10,18 @@ use File::Path;
 
 Drupal::Module::Starter - Create Drupal Module starter files
 
+
 =head1 VERSION
 
-Version 0.04
+Version 0.05
 
 =cut
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 =head1 SYNOPSIS
+
+    You probably don't want to use this module directly - you want to use the drupal-module-starter script in the scripts directory of the distribution
 
     use Drupal::Module::Starter;
 
@@ -126,22 +129,22 @@ sub generate_php {
 
 ";
 
-	use Data::Dumper;
-	print Dumper($self->{cfg});
+	#use Data::Dumper;
+	#print Dumper($self->{cfg});
 	
-	exit;
+	#exit;
+
+
 
 	# add stub hooks
 	my @hooks = keys %{$self->{stubs}};
 	for my  $hook (keys %{$self->{stubs}}) {
 	
-		 next unless($self->{cfg}->{$hook}); 
-		 
-		 print "You seem to want hook $hook..\n";
+		 next unless($self->{cfg}->{$hook}); 		 
 		 
 		 my $stub = $self->{stubs}->{$hook};
 		 
-		 # TODO -- add table substitution support...
+		 # TODO -- add table name substitution support...
 		 
 		 
 		 $stub =~ s/MODULENAME/$self->{cfg}->{module}/g;
