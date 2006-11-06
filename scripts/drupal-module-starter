@@ -12,9 +12,9 @@ drupal-module-starter - creates a skeleton Drupal module distribution
 
 =cut
 
-our $version = 0.3;
 
-print "Starting module starter $version\n\n";
+
+print "Starting module starter $Drupal::Module::Starter::VERSION\n\n";
 
 my $config;
 

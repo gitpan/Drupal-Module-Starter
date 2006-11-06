@@ -11,6 +11,8 @@ isa_ok($s, 'Drupal::Module::Starter');
 ok(my $yaml = $s->sample_yaml);
 ok(Load($yaml), "Yaml load and parse");
 
+diag("todo:  add a --pages option to auto-add menu callbacks and menu items");
+
 
 
 

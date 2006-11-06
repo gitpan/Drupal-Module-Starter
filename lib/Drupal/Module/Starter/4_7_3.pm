@@ -8,7 +8,7 @@ use strict;
 
 
 our $stubs = {
-hook_access =>  q!function hook_access($op, $node) { 
+hook_access =>  q!function MODULENAME_access($op, $node) { 
   global $user; 
 
   if ($op == 'create') { 
@@ -23,7 +23,7 @@ hook_access =>  q!function hook_access($op, $node) {
 } !,
 	
 
-hook_auth =>  q!function hook_auth($username, $password, $server) { 
+hook_auth =>  q!function MODULENAME_auth($username, $password, $server) { 
   $message = new xmlrpcmsg('drupal.login', array(new xmlrpcval($username, 
     'string'), new xmlrpcval($password, 'string'))); 
 
@@ -38,7 +38,7 @@ hook_auth =>  q!function hook_auth($username, $password, $server) {
 } !,
 	
 
-hook_block =>  q!function hook_block($op = 'list', $delta = 0, $edit = array()) { 
+hook_block =>  q!function MODULENAME_block($op = 'list', $delta = 0, $edit = array()) { 
   if ($op == 'list') { 
     $blocks[0] = array('info' => t('Mymodule block #1 shows ...'), 
       'weight' => 0, 'enabled' => 1, 'region' => 'left'); 
@@ -74,7 +74,7 @@ hook_block =>  q!function hook_block($op = 'list', $delta = 0, $edit = array()) 
 } !,
 	
 
-hook_comment =>  q!function hook_comment($comment, $op) { 
+hook_comment =>  q!function MODULENAME_comment($comment, $op) { 
   if ($op == 'insert' || $op == 'update') { 
     $nid = $comment['nid']; 
   } 
@@ -83,7 +83,7 @@ hook_comment =>  q!function hook_comment($comment, $op) {
 } !,
 	
 
-hook_cron =>  q!function hook_cron() { 
+hook_cron =>  q!function MODULENAME_cron() { 
   $result = db_query('SELECT * FROM {site} WHERE checked = 0 OR checked 
     + refresh < %d', time()); 
 
@@ -93,7 +93,7 @@ hook_cron =>  q!function hook_cron() {
 } !,
 	
 
-hook_db_rewrite_sql =>  q!function hook_db_rewrite_sql($query, $primary_table, $primary_field, $args) { 
+hook_db_rewrite_sql =>  q!function MODULENAME_db_rewrite_sql($query, $primary_table, $primary_field, $args) { 
   switch ($primary_field) { 
     case 'nid': 
       // this query deals with node objects 
@@ -114,23 +114,23 @@ hook_db_rewrite_sql =>  q!function hook_db_rewrite_sql($query, $primary_table, $
 } !,
 	
 
-hook_delete =>  q!function hook_delete(&$node) { 
+hook_delete =>  q!function MODULENAME_delete(&$node) { 
   db_query('DELETE FROM {mytable} WHERE nid = %d', $node->nid); 
 } !,
 	
 
-hook_elements =>  q!function hook_elements() { 
+hook_elements =>  q!function MODULENAME_elements() { 
   $type['filter_format'] = array('#input' => TRUE); 
   return $type; 
 } !,
 	
 
-hook_exit =>  q!function hook_exit($destination = NULL) { 
+hook_exit =>  q!function MODULENAME_exit($destination = NULL) { 
   db_query('UPDATE {counter} SET hits = hits + 1 WHERE type = 1'); 
 } !,
 	
 
-hook_file_download =>  q!function hook_file_download($file) { 
+hook_file_download =>  q!function MODULENAME_file_download($file) { 
   if (user_access('access content')) { 
     if ($filemime = db_result(db_query("SELECT filemime FROM {fileupload} WHERE filepath = '%s'", file_create_path($file)))) { 
       return array('Content-type:' . $filemime); 
@@ -142,7 +142,7 @@ hook_file_download =>  q!function hook_file_download($file) {
 } !,
 	
 
-hook_filter =>  q!function hook_filter($op, $delta = 0, $format = -1, $text = '') { 
+hook_filter =>  q!function MODULENAME_filter($op, $delta = 0, $format = -1, $text = '') { 
   switch ($op) { 
     case 'list': 
       return array(0 => t('Code filter')); 
@@ -168,7 +168,7 @@ hook_filter =>  q!function hook_filter($op, $delta = 0, $format = -1, $text = ''
 } !,
 	
 
-hook_filter_tips =>  q!function hook_filter_tips($delta, $format, $long = false) { 
+hook_filter_tips =>  q!function MODULENAME_filter_tips($delta, $format, $long = false) { 
   if ($long) { 
     return t('To post pieces of code, surround them with &lt;code&gt;...&lt;/code&gt; tags. For PHP code, you can use &lt;?php ... ?&gt;, which will also colour it based on syntax.'); 
   } 
@@ -178,14 +178,14 @@ hook_filter_tips =>  q!function hook_filter_tips($delta, $format, $long = false)
 } !,
 	
 
-hook_footer =>  q!function hook_footer($main = 0) { 
+hook_footer =>  q!function MODULENAME_footer($main = 0) { 
   if (variable_get('dev_query', 0)) { 
     print '<div style="clear:both;">'. devel_query_table() .'</div>'; 
   } 
 } !,
 	
 
-hook_form =>  q!function hook_form(&$node, &$param) { 
+hook_form =>  q!function MODULENAME_form(&$node, &$param) { 
   $form['title'] = array( 
     '#type'=> 'textfield', 
     '#title' => t('Title'), 
@@ -219,7 +219,7 @@ hook_form =>  q!function hook_form(&$node, &$param) {
 } !,
 	
 
-hook_form_alter =>  q!function hook_form_alter($form_id, &$form) { 
+hook_form_alter =>  q!function MODULENAME_form_alter($form_id, &$form) { 
   if (isset($form['type']) && $form['type']['#value'] .'_node_settings' == $form_id) { 
     $form['workflow']['upload_'. $form['type']['#value']] = array( 
       '#type' => 'radios', 
@@ -231,7 +231,7 @@ hook_form_alter =>  q!function hook_form_alter($form_id, &$form) {
 } !,
 	
 
-hook_help =>  q!function hook_help($section) { 
+hook_help =>  q!function MODULENAME_help($section) { 
   switch ($section) { 
     case 'admin/help#block': 
       return t('<p>Blocks are the boxes visible in the sidebar(s) 
@@ -246,7 +246,7 @@ hook_help =>  q!function hook_help($section) {
 } !,
 	
 
-hook_info =>  q!function hook_info($field = 0) { 
+hook_info =>  q!function MODULENAME_info($field = 0) { 
   $info['name'] = 'Drupal'; 
   $info['protocol'] = 'XML-RPC'; 
 
@@ -259,7 +259,7 @@ hook_info =>  q!function hook_info($field = 0) {
 } !,
 	
 
-hook_init =>  q!function hook_init() { 
+hook_init =>  q!function MODULENAME_init() { 
   global $recent_activity; 
 
   if ((variable_get('statistics_enable_auto_throttle', 0)) && 
@@ -279,13 +279,13 @@ hook_init =>  q!function hook_init() {
 } !,
 	
 
-hook_insert =>  q!function hook_insert($node) { 
+hook_insert =>  q!function MODULENAME_insert($node) { 
   db_query("INSERT INTO {mytable} (nid, extra) 
     VALUES (%d, '%s')", $node->nid, $node->extra); 
 } !,
 	
 
-hook_install =>  q!function hook_install() { 
+hook_install =>  q!function MODULENAME_install() { 
   switch ($GLOBALS['db_type']) { 
     case 'mysql': 
     case 'mysqli': 
@@ -314,7 +314,7 @@ hook_install =>  q!function hook_install() {
 } !,
 	
 
-hook_link =>  q!function hook_link($type, $node = NULL, $teaser = FALSE) { 
+hook_link =>  q!function MODULENAME_link($type, $node = NULL, $teaser = FALSE) { 
   $links = array(); 
 
   if ($type == 'node' && $node->type == 'book') { 
@@ -333,13 +333,13 @@ hook_link =>  q!function hook_link($type, $node = NULL, $teaser = FALSE) {
 } !,
 	
 
-hook_load =>  q!function hook_load($node) { 
+hook_load =>  q!function MODULENAME_load($node) { 
   $additions = db_fetch_object(db_query('SELECT * FROM {mytable} WHERE nid = %s', $node->nid)); 
   return $additions; 
 } !,
 	
 
-hook_menu =>  q!function hook_menu($may_cache) { 
+hook_menu =>  q!function MODULENAME_menu($may_cache) { 
   global $user; 
   $items = array(); 
 
@@ -363,7 +363,7 @@ hook_menu =>  q!function hook_menu($may_cache) {
 } !,
 	
 
-hook_nodeapi =>  q!function hook_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) { 
+hook_nodeapi =>  q!function MODULENAME_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) { 
   switch ($op) { 
     case 'validate': 
       if ($node->nid && $node->moderate) { 
@@ -386,7 +386,7 @@ hook_nodeapi =>  q!function hook_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 } !,
 	
 
-hook_node_grants =>  q!function hook_node_grants($user, $op) { 
+hook_node_grants =>  q!function MODULENAME_node_grants($user, $op) { 
   $grants = array(); 
   if ($op == 'view') { 
     if (user_access('access content')) { 
@@ -408,7 +408,7 @@ hook_node_grants =>  q!function hook_node_grants($user, $op) {
 } !,
 	
 
-hook_node_info =>  q!function hook_node_info() { 
+hook_node_info =>  q!function MODULENAME_node_info() { 
   return array( 
     'project_project' => array('name' => t('project'), 'base' => 'project_project'), 
     'project_issue' => array('name' => t('issue'), 'base' => 'project_issue') 
@@ -416,12 +416,12 @@ hook_node_info =>  q!function hook_node_info() {
 } !,
 	
 
-hook_perm =>  q!function hook_perm() { 
+hook_perm =>  q!function MODULENAME_perm() { 
   return array('administer my module'); 
 } !,
 	
 
-hook_ping =>  q!function hook_ping($name = '', $url = '') { 
+hook_ping =>  q!function MODULENAME_ping($name = '', $url = '') { 
   $feed = url('node/feed'); 
 
   $client = new xmlrpc_client('/RPC2', 'rpc.weblogs.com', 80); 
@@ -439,7 +439,7 @@ hook_ping =>  q!function hook_ping($name = '', $url = '') {
 } !,
 	
 
-hook_prepare =>  q!function hook_prepare(&$node) { 
+hook_prepare =>  q!function MODULENAME_prepare(&$node) { 
   if ($file = file_check_upload($field_name)) { 
     $file = file_save_upload($field_name, _image_filename($file->filename, NULL, TRUE)); 
     if ($file) { 
@@ -458,7 +458,7 @@ hook_prepare =>  q!function hook_prepare(&$node) {
 } !,
 	
 
-hook_search =>  q!function hook_search($op = 'search', $keys = null) { 
+hook_search =>  q!function MODULENAME_search($op = 'search', $keys = null) { 
   switch ($op) { 
     case 'name': 
       return t('content'); 
@@ -484,7 +484,7 @@ hook_search =>  q!function hook_search($op = 'search', $keys = null) {
 } !,
 	
 
-hook_search_item =>  q!function hook_search_item($item) { 
+hook_search_item =>  q!function MODULENAME_search_item($item) { 
   $output .= ' <b><u><a href="'. $item['link'] 
     .'">'. $item['title'] .'</a></u></b><br />'; 
   $output .= ' <small>' . $item['description'] . '</small>'; 
@@ -494,13 +494,13 @@ hook_search_item =>  q!function hook_search_item($item) {
 } !,
 	
 
-hook_search_preprocess =>  q!function hook_search_preprocess($text) { 
+hook_search_preprocess =>  q!function MODULENAME_search_preprocess($text) { 
   // Do processing on $text 
   return $text; 
 } !,
 	
 
-hook_settings =>  q!function hook_settings() { 
+hook_settings =>  q!function MODULENAME_settings() { 
   $form['example_a'] = array( 
     '#type' => 'textfield', 
     '#title' => t('Setting A'), 
@@ -520,7 +520,7 @@ hook_settings =>  q!function hook_settings() {
 } !,
 	
 
-hook_submit =>  q!function hook_submit(&$node) { 
+hook_submit =>  q!function MODULENAME_submit(&$node) { 
   // if a file was uploaded, move it to the files directory 
   if ($file = file_check_upload('file')) { 
     $node->file = file_save_upload($file, file_directory_path(), false); 
@@ -528,7 +528,7 @@ hook_submit =>  q!function hook_submit(&$node) {
 } !,
 	
 
-hook_taxonomy =>  q!function hook_taxonomy($op, $type, $object) { 
+hook_taxonomy =>  q!function MODULENAME_taxonomy($op, $type, $object) { 
   if ($type == 'vocabulary' && ($op == 'insert' || $op == 'update')) { 
     if (variable_get('forum_nav_vocabulary', '') == '' 
         && in_array('forum', $object['nodes'])) { 
@@ -539,13 +539,13 @@ hook_taxonomy =>  q!function hook_taxonomy($op, $type, $object) {
 } !,
 	
 
-hook_update =>  q!function hook_update($node) { 
+hook_update =>  q!function MODULENAME_update($node) { 
   db_query("UPDATE {mytable} SET extra = '%s' WHERE nid = %d", 
     $node->extra, $node->nid); 
 } !,
 	
 
-hook_update_index =>  q!function hook_update_index() { 
+hook_update_index =>  q!function MODULENAME_update_index() { 
   $last = variable_get('node_cron_last', 0); 
   $limit = (int)variable_get('search_cron_limit', 100); 
 
@@ -585,7 +585,7 @@ hook_update_index =>  q!function hook_update_index() {
 } !,
 	
 
-hook_update_N =>  q!function hook_update_N() { 
+hook_update_N =>  q!function MODULENAME_update_N() { 
   $ret = array(); 
 
   switch ($GLOBALS['db_type']) { 
@@ -605,7 +605,7 @@ hook_update_N =>  q!function hook_update_N() {
 } !,
 	
 
-hook_user =>  q!function hook_user($op, &$edit, &$account, $category = NULL) { 
+hook_user =>  q!function MODULENAME_user($op, &$edit, &$account, $category = NULL) { 
   if ($op == 'form' && $category == 'account') { 
     $form['comment_settings'] = array( 
       '#type' => 'fieldset', 
@@ -622,7 +622,7 @@ hook_user =>  q!function hook_user($op, &$edit, &$account, $category = NULL) {
 } !,
 	
 
-hook_validate =>  q!function hook_validate(&$node) { 
+hook_validate =>  q!function MODULENAME_validate(&$node) { 
   if ($node) { 
     if ($node->end && $node->start) { 
       if ($node->start > $node->end) { 
@@ -633,7 +633,7 @@ hook_validate =>  q!function hook_validate(&$node) {
 } !,
 	
 
-hook_view =>  q!function hook_view(&$node, $teaser = FALSE, $page = FALSE) { 
+hook_view =>  q!function MODULENAME_view(&$node, $teaser = FALSE, $page = FALSE) { 
   if ($page) { 
     $breadcrumb = array(); 
     $breadcrumb[] = array('path' => 'example', 'title' => t('example')); 
@@ -647,7 +647,7 @@ hook_view =>  q!function hook_view(&$node, $teaser = FALSE, $page = FALSE) {
 } !,
 	
 
-hook_xmlrpc =>  q!function hook_xmlrpc() { 
+hook_xmlrpc =>  q!function MODULENAME_xmlrpc() { 
   return array( 
     'drupal.login' => 'drupal_login', 
     array( 

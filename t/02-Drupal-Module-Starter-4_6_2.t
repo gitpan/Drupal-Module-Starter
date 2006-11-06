@@ -24,12 +24,6 @@ my $diag = `/usr/bin/php -l $ms->{cfg}->{dir}/$ms->{cfg}->{module}/$ms->{cfg}->{
 like($diag, '/No syntax errors detected/','Php syntax check');
 
 
-SKIP: {
-	skip  "Page callbacks not done yet", 1 if 1;
-	like($ms->{stubs}->{hook_menu}, "/MENU ITEM LIST HERE/",'did we create the page callbacks?');	
-	diag("TODO:  add page callbacks and make sure they show up in the menu hook"); 
-}
-
 
 
 

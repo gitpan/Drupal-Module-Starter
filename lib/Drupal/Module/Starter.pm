@@ -17,7 +17,7 @@ Version 0.05
 
 =cut
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 =head1 SYNOPSIS
 
@@ -105,9 +105,6 @@ hook_xmlrpc: 0
 
 }
 
-
-
-
 =head2 generate_php - run through the requested module hooks and generate stubs
 
 =cut 
@@ -129,13 +126,6 @@ sub generate_php {
 
 ";
 
-	#use Data::Dumper;
-	#print Dumper($self->{cfg});
-	
-	#exit;
-
-
-
 	# add stub hooks
 	my @hooks = keys %{$self->{stubs}};
 	for my  $hook (keys %{$self->{stubs}}) {
@@ -144,14 +134,11 @@ sub generate_php {
 		 
 		 my $stub = $self->{stubs}->{$hook};
 		 
-		 # TODO -- add table name substitution support...
-		 
+		 # TODO -- add table name substitution support...	 
 		 
 		 $stub =~ s/MODULENAME/$self->{cfg}->{module}/g;
 		 $module .= "\n$stub\n\n";
-	}
-
-	
+	}	
 
 	$module .= "?>";
 	return $module;
